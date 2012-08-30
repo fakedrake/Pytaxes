@@ -53,30 +53,38 @@
 
     <div class="container">
 
-      <div class="alert alert-error" tal:condition="error">
-	<button type="button" class="close" data-dismiss="alert">×</button>
-	<h4>Error</h4>
-	<span tal:replace="error">Best check yo self, you're not...</span>
+      <div tal:repeat="e errors">
+	<div class="alert alert-error">
+	  <button type="button" class="close" data-dismiss="alert">×</button>
+	  <h4>Error</h4>
+	  <span tal:replace="e">Best check yo self, you're not...</span>
+	</div>
       </div>
 
-      <div class="alert" tal:condition="warning">
-	<button type="button" class="close" data-dismiss="alert">×</button>
-	<h4>Warning</h4>
-	<span tal:replace="warning">Best check yo self, you're not...</span>
+      <div tal:repeat="w warnings">
+	<div class="alert">
+	  <button type="button" class="close" data-dismiss="alert">×</button>
+	  <h4>Warning</h4>
+	  <span tal:replace="w">Best check yo self, you're not...</span>
+	</div>
       </div>
 
-      <div class="alert alert-success" tal:condition="success">
-	<button type="button" class="close" data-dismiss="alert">×</button>
-	<h4>Success</h4>
-	<span tal:replace="success">Best check yo self, you're not...</span>
+      <div tal:repeat="s successes">
+	<div class="alert alert-success">
+	  <button type="button" class="close" data-dismiss="alert">×</button>
+	  <h4>Success</h4>
+	  <span tal:replace="s">Best check yo self, you're not...</span>
+	</div>
       </div>
 
 
 
-      <div class="alert alert-info" tal:condition="info">
-	<button type="button" class="close" data-dismiss="alert">×</button>
-	<h4>Info</h4>
-	<span tal:replace="info">Best check yo self, you're not...</span>
+      <div tal:repeat="i infos">
+	<div class="alert alert-info">
+	  <button type="button" class="close" data-dismiss="alert">×</button>
+	  <h4>Info</h4>
+	  <span tal:replace="i">Best check yo self, you're not...</span>
+	</div>
       </div>
 
 

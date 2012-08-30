@@ -1,4 +1,4 @@
-class Context(dict):
+class ContextManager(object):
     """Produces dicts for the responces"""
     def __init__(self, **kw):
         self.temp = []

@@ -18,7 +18,7 @@ setup(
     keywords = "hash-table taxcard",
     # url = "http://packages.python.org/Pyrmetros",
     packages=['pytaxes', 'pytaxes.test'],
-    install_requires=['nose'],
+    install_requires=['nose', 'pyramid'],
     long_description=read('README.md'),
     test_suite='nose.collector',
     classifiers=[
