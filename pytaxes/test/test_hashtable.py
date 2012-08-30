@@ -1,23 +1,29 @@
 import unittest
 import os
-from ..hashtable import HashTable, X17
+from ..hashtable import HashTable, X17, index_file
 from ..card import Card
+from ..search import Parser
 
 class TestHashTable(unittest.TestCase):
+    def setUp(self):
+        self.static_dir = os.path.dirname(os.path.realpath(__file__)) + '/static'
+
     def test_add_card(self):
         self.hash_table = HashTable(hash_function_class=X17)
         self.hash_table.insert(Card("bbaa100aajkcbsvbssbsbv888;2011;167;78.23;67897491;P234;P345;S234"))
         self.assertEquals(self.hash_table.lookup(id="bbaa100aajkcbsvbssbsbv888")[0]['id'], "bbaa100aajkcbsvbssbsbv888")
 
-    def test_add_file(self):
-        dir = os.path.dirname(__file__)
-        filename = os.path.join(dir, "static/cards.txt")
+    def add_file(self):
+        ht = index_file(self.static_dir+"/cards.txt")
+        self.assertEquals("abctvj32131kljatefmljk364", ht.lookup(id="abctvj32131kljatefmljk364")[0]['id'])
 
-        f = open(filename).readlines()
-        self.hash_table = HashTable(hash_function_class=X17, initial_size=len(f) * 2)
-        for l in f:
-            if ';' in l:
-                self.hash_table.insert(Card(l))
+    def test_simple_search(self):
+        ht = index_file(self.static_dir + "/search_test.txt")
+        parse = Parser("vendor carfour aplha products money server")
+        cards = parse.search(ht)
+        for c in cards:
+            self.assertIn(c['vendor'], ['carfour', 'alpha'])
+            self.assertIn('money', c['products'])
 
 
 if __name__ == "__main__":

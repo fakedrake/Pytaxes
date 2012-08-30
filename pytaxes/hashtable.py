@@ -69,6 +69,7 @@ class HashTable(object):
         return self.cards[key]
 
     def lookup(self, **kw):
+        """Return a list of the results."""
         if 'id' in kw:
             ret = self.get_card(kw['id'])
             if ret:
@@ -95,6 +96,21 @@ class HashTable(object):
                 self.cards += [None]*self.allocator(hash, len(self.cards))
 
         self.cards[hash] = card
+
+def index_file(filename):
+    """This is a wrapper to index a file 'optimally'. Note that this
+    ignores the number at the top and indexes everything it can get
+    it's hands on.
+    """
+    from card import Card
+    lines = open(filename).readlines()
+    ht = HashTable(hash_function_class=X17, initial_size=len(lines) * 2)
+    for l in lines:
+        if ';' in l:
+            ht.insert(Card(l))
+
+    return ht
+
 if __name__ == "__main__":
     from card import Card
     ht = HashTable(hash_function_class = X17)
