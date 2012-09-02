@@ -10,7 +10,7 @@ def read(fname):
 
 setup(
     name="Pytaxes",
-    version="0.0.1",
+    version="1.0",
     author="Chris Perivolaropoulos",
     author_email="darksaga2006@gmail.com",
     description=("School project on Algorithms and Data Structures course."),
@@ -23,7 +23,7 @@ setup(
         ]
     },
     packages=['pytaxes', 'pytaxes.test', 'pytaxes.ui'],
-    install_requires=['nose'],
+    install_requires=['nose', 'pyramid'],
     long_description=read('README.md'),
     test_suite='nose.collector',
     classifiers=[

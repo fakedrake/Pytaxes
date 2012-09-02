@@ -13,6 +13,8 @@ from pyramid.config import Configurator
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
 
+from context import ContextManager
+
 from wsgiref.simple_server import make_server
 
 logging.basicConfig()
@@ -121,8 +123,10 @@ def main():
     config.add_route('list', '/')
     # static view setup
     config.add_static_view('static', os.path.join(here, 'static'))
+
     # scan for @view_config and @subscriber decorators
     config.scan()
+
     # serve app
     app = config.make_wsgi_app()
     server = make_server('0.0.0.0', 8080, app)
