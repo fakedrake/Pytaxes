@@ -46,7 +46,8 @@ def command(c):
 
 
     if cmd in STATS:
-        env['ht'].infos.append("The current table faced %d conflicts." % env['ht'].conflicts)
+        env['ht'].infos.append("The current table faced %d conflicts, hosts %d distincts cards and it's size is %d slots'" % \
+                               (env['ht'].conflicts, len(env['ht'].slots), len(env['ht'].cards)))
         return ""
 
     if len(c.strip().split()) < 2:
