@@ -16,6 +16,6 @@ class TestSearchParser(unittest.TestCase):
         p = Parser("dates 2010 to 2013") # 18/6/2011")
         res = p.search(self.ht)
         self.assertEquals("", "") # Too many to compare (nice testing habits)0
-    
+
 if __name__ == "__main__":
     unittest.main()
