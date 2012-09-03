@@ -26,6 +26,7 @@ message, 'ADD <card ; separated representation>' to add a card, 'DEL
 <card id>' to delete a card, 'stats' for colision count in hash table,
 'toggle duplicate silence' to show an error when a duplicate card is
 added."""
+
 ADD_CARD = ['ADD']
 DELETE_CARD = ["DEL"]
 STATS = ["conflicts", "stats", "Stats", "STATS"]

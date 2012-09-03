@@ -19,7 +19,7 @@ setup(
     # url="http://packages.python.org/Pyrmetros",
     entry_points = {
         'console_scripts': [
-            'pytaxesweb = pytaxes:ui.webui.main',
+            'pytaxes-webui = pytaxes:ui.webui.main',
         ]
     },
     include_package_data=True,
