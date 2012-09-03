@@ -47,68 +47,142 @@ def double_size(hash, current_length):
 class HashTable(object):
     """The hash table. A card should be able to match a touple"""
 
-    def __init__(self, initial_size=CARD_NUM, hash_function_class=SimpleHashFunction, allocator=double_size):
+    def __init__(self, initial_size=CARD_NUM, hash_function_class=SimpleHashFunction, allocator=double_size, duplicate_silence=True):
+        self.infos = ["New hash table created"]
+        self.warnings = []
+        self.errors = []
+        self.successes = []
         self.cards = [None]*initial_size
         self.hasher = hash_function_class(initial_size)
         self.allocator = allocator
         self.conflicts = 0
         self.content_size = 0
+        self.slots = set()
+        self.duplicate_silence = duplicate_silence
 
-    def get_card(self, id):
+    def get_key(self, id):
+        """Given an id get the slot where it should be or -1 if not found"""
         key = self.hasher(id)
         try:
-            # On a card but not the correct one
-            while self.cards[key] and self.cards[key]['id'] != id:
+            # On a card but not the correct one or on a deleted one
+            while self.cards[key] and (self.cards[key] == "deleted" or self.cards[key]['id'] != id):
                 key += 1
         except IndexError:
-            return None
+            return -1
 
+        # If we ended up on an empty slot
         if not self.cards[key]:
-            return None
+            return -1
 
-        return self.cards[key]
+        return key
+
+    def get_card(self, id):
+        """Get the card defined by id, if not found return None"""
+        key = self.get_key(id)
+        if key >= 0:
+            return self.cards[key]
+
+        return None
 
     def lookup(self, **kw):
-        """Return a list of the results."""
+        """Return a list of the results. IDs are searched fast but
+        anything else requires iiteration."""
+        # Attempt to find it quickly
         if 'id' in kw:
             ret = self.get_card(kw['id'])
             if ret:
                 ret = [ret]
+            else:
+                ret = []
         else:
-            ret = [card for card in self.cards if card is not None]
+            ret = [self.cards[slot] for slot in self.slots]
 
         for i in kw.iteritems():
             ret = [card for card in ret if card.matches(i)]
 
+        if not ret:
+            self.infos.append("No cards match your search.")
+
         return ret
 
-    def insert(self, card):
+    def insert(self, card, log=True):
         """Insert a card"""
+        i=0
+        # Initial hash
         hash = self.hasher(card['id'])
         self.content_size += 1
+
         try:
-            if self.cards[hash]:
+            # Is not empty and not deleted
+            if self.cards[hash] and self.cards[hash] != "deleted":
                 self.conflicts += 1
-                while self.cards[hash]:
+                while self.cards[hash] != "deleted" and self.cards[hash]:
+                    if self.cards[hash]['id'] == card['id']:
+                        if not self.duplicate_silence:
+                            self.errors.append("Attempt to add card failed, card %s already exists." % card['id'])
+                        return
+                    # i+=1
+                    # hash += i**2
                     hash += 1
+
         except IndexError:
+            # Out of bounds
             while hash >= len(self.cards):
                 self.cards += [None]*self.allocator(hash, len(self.cards))
+                if log:
+                    self.warnings.append("Extending hash table")
 
+        # Now we know where to put it
+        if log:
+            self.successes.append("Card %s added, conflicted %d times" % (card['id'], i))
+        self.slots.add(hash)
         self.cards[hash] = card
 
-def index_file(filename):
+    def delete(self, id):
+        """Delete card defined by id"""
+        slot = self.get_key(id)
+        if slot < 0:
+            self.errors.append("Attempt to remove card %s failed: no such card." % id)
+            return
+
+        self.successes.append("Successfully removed card %s." % id)
+        self.slots.remove(slot)
+        self.cards[slot] = "deleted"
+
+    def extract_messages(self):
+        """Returns a dict of the messages in the stack and clears the
+        stack
+        """
+        ret = dict(errors=self.errors,
+                    warnings=self.warnings,
+                    infos=self.infos,
+                    successes=self.successes)
+        self.infos = []
+        self.warnings = []
+        self.errors = []
+        self.successes = []
+        return ret
+
+
+
+def index_file(filename, input_file=None, duplicate_silence=True):
     """This is a wrapper to index a file 'optimally'. Note that this
     ignores the number at the top and indexes everything it can get
     it's hands on.
     """
     from card import Card
-    lines = open(filename).readlines()
-    ht = HashTable(hash_function_class=X17, initial_size=len(lines) * 2)
-    for l in lines:
-        if ';' in l:
-            ht.insert(Card(l))
+    if input_file is None:
+        input_file = open(filename)
 
+    lines = input_file.readlines()
+    ht = HashTable(hash_function_class=X17, initial_size=len(lines) * 2, duplicate_silence=duplicate_silence)
+    for n,l in enumerate(lines):
+        if ';' in l:
+            ht.insert(Card(l), False)
+        else:
+            ht.warnings.append("Ignoring line %d as it didnt seem to have a ';'" % n)
+
+    ht.successes.append("Imported file %s!" % filename)
     return ht
 
 if __name__ == "__main__":

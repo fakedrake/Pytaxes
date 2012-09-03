@@ -14,7 +14,7 @@ class TestHashTable(unittest.TestCase):
         self.assertEquals(self.hash_table.lookup(id="bbaa100aajkcbsvbssbsbv888")[0]['id'], "bbaa100aajkcbsvbssbsbv888")
 
     def add_file(self):
-        ht = index_file(self.static_dir+"/cards.txt")
+        ht = index_file(self.static_dir+"/cards1.txt")
         self.assertEquals("abctvj32131kljatefmljk364", ht.lookup(id="abctvj32131kljatefmljk364")[0]['id'])
 
     def test_simple_search(self):
@@ -25,6 +25,11 @@ class TestHashTable(unittest.TestCase):
             self.assertIn(c['vendor'], ['carfour', 'alpha'])
             self.assertIn('money', c['products'])
 
+    def test_delete(self):
+        ht = index_file(self.static_dir + "/search_test.txt")
+        ht.delete("abctvj22202kljatefkkll363")
+        ht.delete("nonexistent")
+        self.assertEquals([], ht.lookup(id="abctvj22202kljatefkkll363"))
 
 if __name__ == "__main__":
     unittest.main()

@@ -34,15 +34,20 @@ class Card(dict):
         """Check if the tuple matches any my values. Dates must be
         tuples that represent inclusive ranges, costs must be integers
         and products are a list that matches if is a subset of our
-        products."""
+        products.
+        """
         if k not in self:
             return False
 
         if k == 'date':
-            return v[1] <= self['date'] <= v[0]
+            return v[0] <= self['date'] <= v[1]
 
         if k == 'product' or k == 'products':
             return set(v) <= self['products']
 
         # XXX: soon costs will be ranges too
         return self[k] == v
+
+    def __str__(self):
+        return "<h4>%s</h4><ul><li>Date: %s</li><li>Cost: %s</li><li>Vendor: %s</li><li>Products: %s</li></ul>" % \
+          (self['id'], self['date'].strftime("%d/%m/%Y"), str(self['cost']), self['vendor'], str(self['products']))
