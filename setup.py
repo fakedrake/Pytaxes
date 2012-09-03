@@ -10,7 +10,7 @@ def read(fname):
 
 setup(
     name="Pytaxes",
-    version="1.0",
+    version="1.1",
     author="Chris Perivolaropoulos",
     author_email="darksaga2006@gmail.com",
     description=("School project on Algorithms and Data Structures course."),
@@ -22,6 +22,7 @@ setup(
             'pytaxesweb = pytaxes:ui.webui.main',
         ]
     },
+    include_package_data=True,
     packages=['pytaxes', 'pytaxes.test', 'pytaxes.ui'],
     install_requires=['nose', 'pyramid'],
     long_description=read('README.md'),

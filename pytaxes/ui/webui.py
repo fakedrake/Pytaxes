@@ -132,7 +132,7 @@ def main():
     app = config.make_wsgi_app()
     server = make_server('0.0.0.0', 8080, app)
 
-    print "Almost there..."
+    print "Hosted locally, open a browser to localhost:8080..."
     server.serve_forever()
 
 
