@@ -1,4 +1,7 @@
 #XXX: add statistics with sparsity, conflicts, size etc
+from itertools import chain
+from card import Card
+
 CARD_NUM = 200000
 
 class SimpleHashFunction(object):
@@ -35,7 +38,7 @@ class X17 (object):
             id = id[2:]
 
         if len == 1:
-            hash = (( hash * 17 ) + ( ord(key[0]) - ord(' ') )) % self.max_index;
+            hash = (( hash * 17 ) + ( ord(id[0]) - ord(' ') )) % self.max_index;
 
         return hash
 
@@ -61,11 +64,11 @@ class HashTable(object):
         self.duplicate_silence = duplicate_silence
 
     def get_key(self, id):
-        """Given an id get the slot where it should be or -1 if not found"""
+        """Given an id get the slot where it should be or -1 if not found."""
         key = self.hasher(id)
         try:
             # On a card but not the correct one or on a deleted one
-            while self.cards[key] and (self.cards[key] == "deleted" or self.cards[key]['id'] != id):
+            while self.cards[key] and (self.cards[key] == "deleted" or self.cards[key].id != id):
                 key += 1
         except IndexError:
             return -1
@@ -97,29 +100,29 @@ class HashTable(object):
         else:
             ret = [self.cards[slot] for slot in self.slots]
 
+        # Ret knows all the buckets that might match
         for i in kw.iteritems():
-            ret = [card for card in ret if card.matches(i)]
+            ret = chain(*[card.matches(i) for card in ret])
 
         if not ret:
             self.infos.append("No cards match your search.")
 
-        return ret
+        return [i for i in ret]
 
     def insert(self, card, log=True):
-        """Insert a card"""
-        i=0
+        """Insert a purchase"""
+        i = 0
         # Initial hash
-        hash = self.hasher(card['id'])
+        hash = self.hasher(card.id)
         self.content_size += 1
 
+        # Find an empty space
         try:
-            # Is not empty and not deleted
             if self.cards[hash] and self.cards[hash] != "deleted":
                 self.conflicts += 1
                 while self.cards[hash] != "deleted" and self.cards[hash]:
-                    if self.cards[hash]['id'] == card['id']:
-                        if not self.duplicate_silence:
-                            self.errors.append("Attempt to add card failed, card %s already exists." % card['id'])
+                    if self.cards[hash].id == card.id:
+                        self.cards[hash].purchase(card)
                         return
                     # i+=1
                     # hash += i**2
@@ -134,7 +137,8 @@ class HashTable(object):
 
         # Now we know where to put it
         if log:
-            self.successes.append("Card %s added, conflicted %d times" % (card['id'], i))
+            self.successes.append("Card %s added, conflicted %d times" % (card.id, i))
+
         self.slots.add(hash)
         self.cards[hash] = card
 
@@ -170,7 +174,6 @@ def index_file(filename, input_file=None, duplicate_silence=True):
     ignores the number at the top and indexes everything it can get
     it's hands on.
     """
-    from card import Card
     if input_file is None:
         input_file = open(filename)
 

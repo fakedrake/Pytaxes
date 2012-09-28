@@ -32,6 +32,7 @@ DELETE_CARD = ["DEL"]
 STATS = ["conflicts", "stats", "Stats", "STATS"]
 HELP = ["h", 'help', 'HELP', 'info']
 TOGGLE_DUPLICATE_SILENCE = ["toggle duplicate silence"]
+SORT = ["sorted"]
 
 here = os.path.dirname(os.path.abspath(__file__))
 env = ContextManager(errors=[], warnings=[], successes=[], infos=[], ht=HashTable(), duplicate_silence=True)
@@ -117,6 +118,7 @@ def main():
     settings['debug_all'] = True
     settings['mako.directories'] = os.path.join(here, 'templates')
     settings['db'] = os.path.join(here, 'tasks.db')
+
     # configuration setup
     config = Configurator(settings=settings)
     # routes setup
