@@ -102,8 +102,7 @@ class HashTable(object):
             ret = [self.cards[slot] for slot in self.slots]
 
         for i in kw.iteritems():
-            ret = [c.matches(i) for c in ret]
-            filter(lambda x: x, ret)
+            ret = filter(lambda x: x, [c.matches(i) for c in ret])
 
         if not ret:
             self.infos.append("No cards match your search.")

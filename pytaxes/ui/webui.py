@@ -3,8 +3,8 @@ import logging
 
 from itertools import chain
 
-from .context import ContextManager
-from .pages import PageManager
+from context import ContextManager
+from pages import PageManager
 
 from ..hashtable import HashTable, index_file
 from ..card import Card
@@ -32,7 +32,7 @@ DELETE_CARD = ["DEL"]
 STATS = ["conflicts", "stats", "Stats", "STATS"]
 HELP = ["h", 'help', 'HELP', 'info']
 TOGGLE_DUPLICATE_SILENCE = ["toggle duplicate silence"]
-SORT = ["sorted"]
+SORTED = ["sorted", "sort"]
 
 here = os.path.dirname(os.path.abspath(__file__))
 env = ContextManager(errors=[], warnings=[], successes=[], infos=[], ht=HashTable(), duplicate_silence=True)
@@ -63,6 +63,12 @@ def command(c):
     if cmd in DELETE_CARD:
         env['ht'].delete(arg)
         return ""
+
+    if cmd in SORTED:
+        # We should sort by cost
+        env.temporary(("sort", True))
+        env['ht'].infos.append("Cards sorted by cost")
+
 
     if c in TOGGLE_DUPLICATE_SILENCE:
         if env['duplicate_silence']:
@@ -103,7 +109,7 @@ def list_view(request):
 
     if  'search' in request.GET:
         search = command(request.GET['search'])
-        pages = PageManager(search, env['ht'], current_page)
+        pages = PageManager(search, env['ht'], current_page, env['sort'])
     else:
         pages = PageManager("", env['ht'], current_page)
 

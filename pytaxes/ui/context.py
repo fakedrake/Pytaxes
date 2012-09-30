@@ -9,7 +9,10 @@ class ContextManager(object):
     def __getitem__(self, key):
         if key in self.temp:
             return self.temp[key]
-        return self.perm[key]
+        try:
+            return self.perm[key]
+        except KeyError:
+            return None
 
     def __setitem__(self, key, v):
         self.permanent((key,v))

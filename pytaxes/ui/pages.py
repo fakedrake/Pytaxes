@@ -5,9 +5,14 @@ CARDS_PER_PAGE = 10
 VISIBLE_PAGES = 8
 
 class PageManager(object):
-    def __init__(self, search_string, hash_table, current=0):
+    def __init__(self, search_string, hash_table, current=0, sort=None):
         self.parser = Parser(search_string)
-        self.cards = self.parser.search(hash_table)
+
+        if sort:
+            self.cards = sorted(self.parser.search(hash_table), key=lambda x: x['cost'], reverse=True)
+        else:
+            self.cards = self.parser.search(hash_table)
+
         if 0<=current<len(self.cards)/CARDS_PER_PAGE:
             self.current = current
         else:
