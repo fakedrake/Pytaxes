@@ -11,11 +11,11 @@ class TestHashTable(unittest.TestCase):
     def test_add_card(self):
         self.hash_table = HashTable(hash_function_class=X17)
         self.hash_table.insert(Card("bbaa100aajkcbsvbssbsbv888;2011;167;78.23;67897491;P234;P345;S234"))
-        self.assertEquals(self.hash_table.lookup(id="bbaa100aajkcbsvbssbsbv888")[0]['id'], "bbaa100aajkcbsvbssbsbv888")
+        self.assertEquals(self.hash_table.lookup(id="bbaa100aajkcbsvbssbsbv888")[0].id, "bbaa100aajkcbsvbssbsbv888")
 
     def add_file(self):
         ht = index_file(self.static_dir+"/cards1.txt")
-        self.assertEquals("abctvj32131kljatefmljk364", ht.lookup(id="abctvj32131kljatefmljk364")[0]['id'])
+        self.assertEquals("abctvj32131kljatefmljk364", ht.lookup(id="abctvj32131kljatefmljk364")[0].id)
 
     def test_simple_search(self):
         ht = index_file(self.static_dir + "/search_test.txt")

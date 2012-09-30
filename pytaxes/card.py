@@ -16,14 +16,17 @@ class Purchase(dict):
 class Card(object):
     """A card able to match stuff on it's own."""
 
-    def __init__(self, string=None, **kw):
+    def __init__(self, string=None, purchases=None, **kw):
         """No security is enforced at this point. You can have any
         field your heart desires. This will break on the way though"""
-        self.purchases = []
-        if string:
-            self.purchases.append(Purchase(self.parse_string(string)))
+        if purchases:
+            self.purchases = purchases
         else:
-            self.purchases.append(Purchase(kw))
+            self.purchases = []
+            if string:
+                self.purchases.append(Purchase(self.parse_string(string)))
+            else:
+                self.purchases.append(Purchase(kw))
 
         self._id = self.purchases[0]['id']
 
@@ -32,7 +35,7 @@ class Card(object):
         itself knows how to hash each card. This is so that i can
         insert cards in sets
         """
-        return hash(self['id'])
+        return hash(self.id)
 
     @property
     def id(self):
@@ -54,7 +57,7 @@ class Card(object):
         return ret
 
     def matches(self, (k,v)):
-        """Return a list of purchases that match the criterion
+        """Return a version of yourself only with the interesting purchases
         """
         ret = []
         for p in self.purchases:
@@ -72,7 +75,10 @@ class Card(object):
             if p[k] == v:
                 ret.append(p)
                 continue
-        return ret
+        if ret:
+            return Card(purchases=ret)
+        else:
+            return None
 
     def purchase(self, card):
         """Copy the purchases of that card to this one."""

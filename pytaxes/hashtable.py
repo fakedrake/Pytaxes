@@ -88,8 +88,9 @@ class HashTable(object):
         return None
 
     def lookup(self, **kw):
-        """Return a list of the results. IDs are searched fast but
-        anything else requires iiteration."""
+        """Return a list of the resulting cards(including only the
+        relevant purchases). IDs are searched fast but anything else
+        requires iiteration."""
         # Attempt to find it quickly
         if 'id' in kw:
             ret = self.get_card(kw['id'])
@@ -100,14 +101,14 @@ class HashTable(object):
         else:
             ret = [self.cards[slot] for slot in self.slots]
 
-        # Ret knows all the buckets that might match
         for i in kw.iteritems():
-            ret = chain(*[card.matches(i) for card in ret])
+            ret = [c.matches(i) for c in ret]
+            filter(lambda x: x, ret)
 
         if not ret:
             self.infos.append("No cards match your search.")
 
-        return [i for i in ret]
+        return ret
 
     def insert(self, card, log=True):
         """Insert a purchase"""
