@@ -41,6 +41,23 @@ class Card(object):
     def id(self):
         return self._id
 
+    def __getitem__(self, it):
+        if it == "cost":
+            ret = 0
+            for p in self.purchases:
+                ret += p['cost']
+            return ret
+
+        if it == 'products':
+            s =  set()
+            for p in self.purchases:
+                s = s.union(p['products'])
+            return s
+
+        # Return the first date
+        return self.purchases[0][it]
+
+
     def parse_string(self, string):
         ret = dict()
         if string[-1] == "\n":
@@ -53,7 +70,7 @@ class Card(object):
         ret['cost'] = float(it.next())
         ret['vendor'] = it.next()
         ret['products'] = set([i for i in it])
-        ret['date'] = date(year, 1, 1) + timedelta(days-1)
+        ret['date'] = date(year, 1, 1) + timedelta(days)
         return ret
 
     def matches(self, (k,v)):
