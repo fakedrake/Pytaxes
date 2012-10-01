@@ -30,7 +30,7 @@ class Parser(object):
     def __init__(self, string, default_filler='id'):
         words = [i for i in string.split() if i != '']
         splitters = [i for i in chain(*[l for k, l in self.pairs])]
-        self.data = {i:[] for i,x in self.pairs}
+        self.data = dict((i,[]) for i,x in self.pairs)
         self.errors = []
 
         filler = default_filler

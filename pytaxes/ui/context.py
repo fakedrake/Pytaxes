@@ -29,6 +29,6 @@ class ContextManager(object):
             self.temporary(i)
 
     def __call__(self, **kw):
-        ret = {k:v for k,v in chain(self.perm.iteritems(), self.temp.iteritems(), kw.iteritems())}
+        ret = dict((k,v) for k,v in chain(self.perm.iteritems(), self.temp.iteritems(), kw.iteritems()))
         self.temp = {}
         return ret
